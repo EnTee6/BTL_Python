@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.env
+
+# Logs and databases (Optional, depending if user wants to share DB)
+# database/premier_league.db  # Giữ lại để giảng viên có thể test không cần cào
+logs/
+*.log
+
+# Cookies
+*.pkl
