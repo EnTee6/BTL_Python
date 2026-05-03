@@ -8,6 +8,7 @@ import pickle
 from collections import defaultdict
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
 
 # Thêm thư mục gốc vào path
@@ -75,12 +76,17 @@ class FBRefScraper:
         if use_undetected:
             try:
                 import undetected_chromedriver as uc
-                options = uc.ChromeOptions()
-                _apply_common_options(options)
-                self.driver = uc.Chrome(options=options, use_subprocess=True)
-            except Exception as exc:
-                print(f"  [WARNING] Không thể khởi tạo undetected-chromedriver ({exc}). Fallback sang Selenium.")
+            except ImportError as exc:
+                print(f"  [WARNING] Không thể import undetected-chromedriver ({exc}). Fallback sang Selenium.")
                 use_undetected = False
+            else:
+                try:
+                    options = uc.ChromeOptions()
+                    _apply_common_options(options)
+                    self.driver = uc.Chrome(options=options, use_subprocess=True)
+                except (WebDriverException, RuntimeError, OSError) as exc:
+                    print(f"  [WARNING] Không thể khởi tạo undetected-chromedriver ({exc}). Fallback sang Selenium.")
+                    use_undetected = False
 
         if not use_undetected:
             options = Options()
