@@ -62,16 +62,30 @@ class FBRefScraper:
         from dotenv import load_dotenv
         load_dotenv()
         is_headless = os.getenv('HEADLESS_MODE', 'false').lower() == 'true'
+        use_undetected = os.getenv('USE_UNDETECTED_CHROMEDRIVER', 'true').lower() == 'true'
         
-        options = Options()
-        options.add_argument("--window-size=1920,1080")
-        if is_headless:
-            options.add_argument("--headless=new")
-        options.add_argument(f"user-agent={REQUEST_HEADERS['User-Agent']}")
-        options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        options.add_experimental_option('useAutomationExtension', False)
-        
-        self.driver = webdriver.Chrome(options=options)
+        def _apply_common_options(options):
+            options.add_argument("--window-size=1920,1080")
+            if is_headless:
+                options.add_argument("--headless=new")
+            options.add_argument(f"user-agent={REQUEST_HEADERS['User-Agent']}")
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            options.add_experimental_option('useAutomationExtension', False)
+
+        if use_undetected:
+            try:
+                import undetected_chromedriver as uc
+                options = uc.ChromeOptions()
+                _apply_common_options(options)
+                self.driver = uc.Chrome(options=options, use_subprocess=True)
+            except Exception as exc:
+                print(f"  [WARNING] Không thể khởi tạo undetected-chromedriver ({exc}). Fallback sang Selenium.")
+                use_undetected = False
+
+        if not use_undetected:
+            options = Options()
+            _apply_common_options(options)
+            self.driver = webdriver.Chrome(options=options)
         
         try:
             from selenium_stealth import stealth

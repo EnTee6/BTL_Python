@@ -96,7 +96,7 @@ python analysis/clustering.py
 ## Xử lý vấn đề anti-bot
 
 ### FBRef.com
-- **Cloudflare CAPTCHA**: Dùng `undetected-chromedriver` để bypass
+- **Cloudflare CAPTCHA**: Dùng `undetected-chromedriver` khi bật Selenium (mặc định). Có thể tắt bằng `USE_UNDETECTED_CHROMEDRIVER=false`
 - **Rate Limit**: Delay ngẫu nhiên 5-10s giữa các request
 - **Retry**: Tự động retry 3 lần khi gặp lỗi
 - **CAPTCHA thủ công**: Nếu cần, giải CAPTCHA trong cửa sổ trình duyệt Selenium
